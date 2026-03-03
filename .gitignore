@@ -1,0 +1,52 @@
+# ==========================================
+# Terraform / Terragrunt
+# ==========================================
+
+# Ignora a pasta de plugins e módulos baixados (eles são recriados no 'terraform init')
+**/.terraform/*
+
+# Ignora arquivos de estado local (O estado deve estar no S3/Backend remoto, nunca no Git)
+*.tfstate
+*.tfstate.*
+
+# Ignora o arquivo de log de travamento do Terraform
+*.terraform.tfstate.lock.info
+
+# Ignora arquivos de variáveis sensíveis (onde você coloca senhas ou chaves)
+*.tfvars
+*.tfvars.json
+
+# Ignora arquivos de variáveis de ambiente específicas
+.env
+.envrc
+
+# ==========================================
+# Provedores e Builds
+# ==========================================
+
+# Se você gerar pacotes .zip para o Lambda via Terraform, ignore-os
+*.zip
+
+# Ignora arquivos de log de crash
+crash.log
+crash.*.log
+
+# ==========================================
+# Linguagens (Python - Lambda/Glue)
+# ==========================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# ==========================================
+# Sistema Operacional / IDEs
+# ==========================================
+
+.DS_Store
+.idea/
+.vscode/
+*.swp
