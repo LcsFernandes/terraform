@@ -35,21 +35,26 @@ jobs:
       # Inicializa backend
       - name: Terraform Init
         run: terraform init
+        working-directory: infra/dev
 
       # Checagem de formatação
       - name: Terraform Format
         run: terraform fmt -check
+        working-directory: infra/dev
 
       # Validação
       - name: Terraform Validate
         run: terraform validate
+        working-directory: infra/dev
 
       # Plan apenas no Pull Request
       - name: Terraform Plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color
+        working-directory: infra/dev
 
       # Apply automático no merge (push na main)
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: terraform apply -auto-approve
+        working-directory: infra/dev
