@@ -1,29 +1,55 @@
-name: Terraform Deploy
- 
+name: Terraform CI/CD
+
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
- 
+
 jobs:
-  terraform-dev:
+  terraform:
     runs-on: ubuntu-latest
- 
-    # defaults:
-    #   run:
-    #     working-directory: env/dev
- 
+
+    env:
+      AWS_REGION: us-east-1
+
     steps:
-      - uses: actions/checkout@v3
- 
-      - uses: hashicorp/setup-terraform@v2
- 
-      - uses: aws-actions/configure-aws-credentials@v4
+      # Checkout do código
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Instala Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Configura credenciais AWS (via Secrets)
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
- 
-      - run: terraform init
-      - run: terraform plan
-    #  - run: terraform apply -auto-approve
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Inicializa backend
+      - name: Terraform Init
+        run: terraform init
+
+      # Checagem de formatação
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      # Validação
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Plan apenas no Pull Request
+      - name: Terraform Plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color
+
+      # Apply automático no merge (push na main)
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        run: terraform apply -auto-approve
